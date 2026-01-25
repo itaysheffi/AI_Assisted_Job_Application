@@ -32,4 +32,14 @@ uvicorn app.main:app --reload
 Then open:
 - Swagger UI: `http://127.0.0.1:8000/docs`
 - Health check: `http://127.0.0.1:8000/health`
+- Users: `http://127.0.0.1:8000/users`
+- Jobs: `http://127.0.0.1:8000/jobs`
+
+Notes:
+- Settings are loaded from `backend/.env` (optional) and environment variables.
+- Key variables:
+  - `ENV`: `development` (default), `staging`, `production`
+  - `DATABASE_URL`: defaults to SQLite for local dev; **must be non-SQLite in prod/staging**
+  - `SECRET_KEY`: dev default is provided; **must be set in prod/staging**
+- `OPENAI_API_KEY` is optional (some features may require it).
 

@@ -1,9 +1,8 @@
-from fastapi import APIRouter
+"""Compatibility shim.
 
-router = APIRouter(tags=["health"])
+Health routes live under `app.api.routes.health`. This file re-exports the router so
+older imports (`from app.api.health import router`) keep working.
+"""
 
-
-@router.get("/health")
-def health() -> dict[str, str]:
-    return {"status": "ok"}
+from app.api.routes.health import router  # noqa: F401
 

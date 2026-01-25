@@ -1,27 +1,30 @@
-from pathlib import Path
+import logging
 
-from dotenv import load_dotenv
+from fastapi import FastAPI
 
-# Load environment variables from a local `.env` file into `os.environ` early.
-# This keeps configuration consistent across local dev, tests, and deployment.
-DOTENV_PATH = Path(__file__).resolve().parent.parent / ".env"
-load_dotenv(dotenv_path=DOTENV_PATH, override=True)
-
-from fastapi import APIRouter, FastAPI  # noqa: E402 (intentional import after load_dotenv)
-
-from app.api.health import router as health_router
+from app.api.routes import api_router
 from app.core.config import settings
 
-placeholder_router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 def create_app() -> FastAPI:
     """App factory (best practice for testing and reuse)."""
     app = FastAPI(title="AI Assisted Job Analyzer")
 
-    # Placeholder router: we'll add real routes later.
-    app.include_router(placeholder_router)
-    app.include_router(health_router)
+    app.include_router(api_router)
+
+    @app.on_event("startup")
+    async def _log_settings_loaded() -> None:
+        # Confirm settings loaded without ever logging secrets.
+        logger.info(
+            "Settings loaded env=%s debug=%s database=%s secret_key_set=%s dotenv_files=%s",
+            settings.ENV,
+            settings.DEBUG,
+            settings.safe_database_target(),
+            bool(settings.SECRET_KEY),
+            settings.dotenv_file_status(),
+        )
 
     # TEMP (dev-only): remove this route before production.
     if settings.env == "development" or settings.debug:

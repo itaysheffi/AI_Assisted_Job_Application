@@ -10,6 +10,7 @@ env/
 .env
 
 *.db
+*.db.bak
 *.sqlite
 *.sqlite3
 
